@@ -111,6 +111,7 @@ function Feature({ title, img, video, description }) {
             autoPlay
             controls
             loop
+            playsinline
             src={video}
           />
         ) : (
