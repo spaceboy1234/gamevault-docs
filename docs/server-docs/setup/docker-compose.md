@@ -51,6 +51,37 @@ Replace the variables (`YOURPASSWORDHERE`, `etc.`), as well as the folder paths 
 Password (YOURPASSWORDHERE) can't be empty! else the database will not work. If you don't want a password, consider running without a PostgreSQL Database (Not recommended)
 :::
 
+### Alternative Compose file for Windows
+We found that, for Windows setup, a few changes were necessary to make it work : 
+- You must add the :z suffix to your media and files mount and you can use the standard Windows backward slash.
+- The only way we found for the database to work is to remove the volumes part and let Docker create itself a volume (not a local mounted folder).
+
+```yaml
+services:
+  gamevault-backend:
+    image: phalcode/gamevault-backend:latest
+    restart: unless-stopped
+    environment:
+      DB_HOST: db
+      DB_USERNAME: gamevault
+      DB_PASSWORD: YOURPASSWORDHERE
+    volumes:
+      # Mount the folder where your games are
+      - c:\your\games\folder:/files:z
+      # Mount the folder where GameVault should store its media
+      - c:\your\media#folder:/media:z
+    ports:
+      - 8080:8080/tcp
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: gamevault
+      POSTGRES_PASSWORD: YOURPASSWORDHERE
+      POSTGRES_DB: gamevault
+```
+
+
 ### Alternative Step 1: Running without a PostgreSQL Database
 
 We don't recommend it, but you can run GameVault without a PostgreSQL Database too using the following configuration:
